@@ -3,150 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض الصور الذكي - النسخة المتوافقة</title>
+    <title>معرض الصور الذكي - 9 صور</title>
+    
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     
     <style>
-        /* شاشة البدء لتفعيل الحساسات */
-        #permission-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            font-family: sans-serif;
+        /* شاشة البداية لتفعيل الحساسات */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; font-family: sans-serif; text-align: center;
         }
-
-        #start-button {
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            background: #25D366; /* لون واتساب */
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            margin-top: 20px;
+        #btn-go {
+            padding: 15px 40px; font-size: 18px; background: #28a745;
+            color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px;
         }
-
-        /* تنسيق التكبير */
-        #fullscreen-zoom {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
+        /* نافذة التكبير */
+        #zoom-container {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center;
         }
-        #fullscreen-zoom img {
-            max-width: 95%; max-height: 95%;
-            object-fit: contain;
-            border: 2px solid #fff;
-        }
+        #zoom-container img { max-width: 90%; max-height: 90%; border: 3px solid #fff; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
     </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <h3>مرحباً بك في المعرض الذكي</h3>
+        <p>يرجى الضغط للبدء وتفعيل ميزة تدوير الهاتف</p>
+        <button id="btn-go">دخول المعرض</button>
+    </div>
+
+    <div id="zoom-container" onclick="this.style.display='none'">
+        <img src="" id="zoomed-img">
+    </div>
+
+    <a-scene renderer="antialias: true; colorManagement: true;" cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+        
+        <a-assets>
+            <img id="img1" src="photo_2026-03-07_21-54-13.jpg">
+            <img id="img2" src="photo_2026-03-07_21-54-29.jpg">
+            <img id="img3" src="photo_2026-03-07_21-54-35.jpg">
+            <img id="img4" src="photo_2026-03-07_21-54-41.jpg">
+            <img id="img5" src="photo_2026-03-07_21-54-46.jpg">
+            <img id="img6" src="photo_2026-03-07_21-54-50.jpg">
+            <img id="img7" src="photo_2026-03-07_21-54-51.jpg">
+            <img id="img8" src="photo_2026-03-07_21-54-46.jpg">
+            <img id="img9" src="photo_2026-03-07_21-54-50.jpg">
+        </a-assets>
+
+        <a-sky color="#1a1a1a"></a-sky>
+        <a-entity light="type: ambient; intensity: 1.2;"></a-entity>
+
+        <a-image class="clickable" zoom-trigger src="#img1" position="0 1.6 -5" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img2" position="3.5 1.6 -3.5" rotation="0 -45 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img3" position="5 1.6 0" rotation="0 -90 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img4" position="3.5 1.6 3.5" rotation="0 -135 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img5" position="0 1.6 5" rotation="0 180 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img6" position="-3.5 1.6 3.5" rotation="0 135 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img7" position="-5 1.6 0" rotation="0 90 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img8" position="-3.5 1.6 -3.5" rotation="0 45 0" width="3.5" height="3.5">
+            <a-plane color="#FFF" width="3.7" height="3.7" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-trigger src="#img9" position="0 6 0" rotation="90 0 0" width="4" height="4">
+            <a-plane color="#FFF" width="4.2" height="4.2" position="0 0 -0.02"></a-plane>
+        </a-image>
+
+        <a-entity id="main-cam" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true" position="0 1.6 0">
+            <a-text value="Tap image to zoom" position="0 -0.8 -1.5" align="center" width="2" color="#BBB"></a-text>
+        </a-entity>
+        
+    </a-scene>
 
     <script>
-        // دالة طلب إذن الحساسات (للآيفون والمتصفحات المقيدة)
-        function requestSensors() {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            removeOverlay();
-                        }
-                    })
-                    .catch(console.error);
-            } else {
-                // للمتصفحات التي لا تحتاج إذن صريح (أندرويد)
-                removeOverlay();
-            }
-        }
-
-        function removeOverlay() {
-            document.getElementById('permission-overlay').style.display = 'none';
-        }
-
-        // مكون التكبير
-        AFRAME.registerComponent('zoom-logic', {
+        // دالة التكبير الموحدة
+        AFRAME.registerComponent('zoom-trigger', {
             init: function () {
-                const zoomOverlay = document.getElementById('fullscreen-zoom');
-                const zoomImg = zoomOverlay.querySelector('img');
-
                 this.el.addEventListener('click', () => {
-                    const src = this.el.getAttribute('src');
-                    zoomImg.src = src;
-                    zoomOverlay.style.display = 'flex';
+                    const srcId = this.el.getAttribute('src');
+                    const imgElement = document.querySelector(srcId);
+                    if (imgElement) {
+                        document.getElementById('zoomed-img').src = imgElement.src;
+                        document.getElementById('zoom-container').style.display = 'flex';
+                    }
                 });
             }
         });
 
-        function closeZoom() {
-            document.getElementById('fullscreen-zoom').style.display = 'none';
+        // تفعيل الحساسات عند الضغط على الزر
+        document.getElementById('btn-go').addEventListener('click', function() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            startExperience();
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                startExperience();
+            }
+        });
+
+        function startExperience() {
+            document.getElementById('start-screen').style.display = 'none';
         }
     </script>
-</head>
-<body>
-
-    <div id="permission-overlay">
-        <h2>مرحباً بك في المعرض الذكي</h2>
-        <p>يرجى النقر للبدء وتفعيل حساسات الحركة</p>
-        <button id="start-button" onclick="requestSensors()">دخول المعرض</button>
-    </div>
-
-    <div id="fullscreen-zoom" onclick="closeZoom()">
-        <img src="" alt="Zoomed Image">
-    </div>
-
-    <a-scene renderer="antialias: true; colorManagement: true;" 
-             cursor="rayOrigin: mouse" 
-             raycaster="objects: .clickable">
-        
-        <a-sky color="#1a1a1a"></a-sky>
-        <a-entity light="type: ambient; intensity: 1.5;"></a-entity>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="0 1.6 -5" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg" position="3.5 1.6 -3.5" rotation="0 -45 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-35.jpg" position="5 1.6 0" rotation="0 -90 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-41.jpg" position="3.5 1.6 3.5" rotation="0 -135 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-46.jpg" position="0 1.6 5" rotation="0 180 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-50.jpg" position="-3.5 1.6 3.5" rotation="0 135 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="-5 1.6 0" rotation="0 90 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg" position="-3.5 1.6 -3.5" rotation="0 45 0" width="3.5" height="3.5">
-            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
-        </a-image>
-
-        <a-entity camera look-controls position="0 1.6 0"></a-entity>
-
-        <!-- تعديل إضافي: تم إضافة تعليق توضيحي هنا -->
-        <div style="position:fixed;bottom:10px;right:10px;color:#fff;font-family:sans-serif;">نسخة معدلة في 2026</div>
-
-    </a-scene>
-
 </body>
 </html>
