@@ -3,70 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض الصور الذكي المطور</title>
+    <title>معرض الصور الذكي - النسخة المتوافقة</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     
     <style>
-        /* تنسيق طبقة التكبير (Overlay) */
-        #fullscreen-zoom {
-            display: none; /* مخفي افتراضياً */
+        /* شاشة البدء لتفعيل الحساسات */
+        #permission-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 9999; /* التأكد من ظهوره فوق كل شيء */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            cursor: zoom-out;
-            animation: fadeIn 0.3s ease;
-        }
-
-        #fullscreen-zoom img {
-            max-width: 95%;
-            max-height: 95%;
-            object-fit: contain; /* يحافظ على أبعاد الصورة */
-            border: 2px solid #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* نص إرشادي بسيط */
-        .instruction {
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
             color: white;
+            text-align: center;
             font-family: sans-serif;
-            pointer-events: none;
-            z-index: 100;
-            text-shadow: 1px 1px 5px black;
+        }
+
+        #start-button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background: #25D366; /* لون واتساب */
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* تنسيق التكبير */
+        #fullscreen-zoom {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        #fullscreen-zoom img {
+            max-width: 95%; max-height: 95%;
+            object-fit: contain;
+            border: 2px solid #fff;
         }
     </style>
 
     <script>
+        // دالة طلب إذن الحساسات (للآيفون والمتصفحات المقيدة)
+        function requestSensors() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            removeOverlay();
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // للمتصفحات التي لا تحتاج إذن صريح (أندرويد)
+                removeOverlay();
+            }
+        }
+
+        function removeOverlay() {
+            document.getElementById('permission-overlay').style.display = 'none';
+        }
+
+        // مكون التكبير
         AFRAME.registerComponent('zoom-logic', {
             init: function () {
                 const zoomOverlay = document.getElementById('fullscreen-zoom');
                 const zoomImg = zoomOverlay.querySelector('img');
 
-                this.el.addEventListener('click', (e) => {
+                this.el.addEventListener('click', () => {
                     const src = this.el.getAttribute('src');
-                    
-                    // تحديث مصدر الصورة وإظهار الطبقة
                     zoomImg.src = src;
                     zoomOverlay.style.display = 'flex';
                 });
             }
         });
 
-        // وظيفة إغلاق التكبير
         function closeZoom() {
             document.getElementById('fullscreen-zoom').style.display = 'none';
         }
@@ -74,7 +92,11 @@
 </head>
 <body>
 
-    <div class="instruction">انقر على أي صورة لتكبيرها</div>
+    <div id="permission-overlay">
+        <h2>مرحباً بك في المعرض الذكي</h2>
+        <p>يرجى النقر للبدء وتفعيل حساسات الحركة</p>
+        <button id="start-button" onclick="requestSensors()">دخول المعرض</button>
+    </div>
 
     <div id="fullscreen-zoom" onclick="closeZoom()">
         <img src="" alt="Zoomed Image">
@@ -119,11 +141,10 @@
             <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
         </a-image>
 
-        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="0 6 0" rotation="90 0 0" width="4" height="4">
-            <a-plane color="#fff" width="4.2" height="4.2" position="0 0 -0.01"></a-plane>
-        </a-image>
-
         <a-entity camera look-controls position="0 1.6 0"></a-entity>
+
+        <!-- تعديل إضافي: تم إضافة تعليق توضيحي هنا -->
+        <div style="position:fixed;bottom:10px;right:10px;color:#fff;font-family:sans-serif;">نسخة معدلة في 2026</div>
 
     </a-scene>
 
