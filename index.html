@@ -2,84 +2,130 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>معرض الصور الذكي المطور</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <!-- component for zooming images on click -->
-    <script>
-      AFRAME.registerComponent('zoom-on-click', {
-        init: function () {
-          const scene = this.el.sceneEl;
-          let overlay;
-
-          function createOverlay() {
-            // create a plane attached to the camera that will act as a fullscreen preview
-            overlay = document.createElement('a-plane');
-            overlay.setAttribute('id', 'zoom-overlay');
-            overlay.setAttribute('position', '0 0 -0.5');
-            // setup material with high quality
-            overlay.setAttribute('material', 'shader: flat; transparent: true; magFilter: linear; minFilter: linearMipmapLinear;');
-            overlay.setAttribute('visible', 'false');
-            // hide when the user clicks the overlay
-            overlay.addEventListener('click', function () {
-              overlay.setAttribute('visible', 'false');
-            });
-            const cameraEl = scene.querySelector('[camera]');
-            cameraEl.appendChild(overlay);
-          }
-
-          this.el.addEventListener('click', () => {
-            if (!overlay) {
-              createOverlay();
-            }
-            const src = this.el.getAttribute('src');
-            // compute size so the plane exactly fills camera frustum
-            const cameraEl = scene.querySelector('[camera]');
-            const cam = cameraEl.getObject3D('camera');
-            if (cam) {
-              const distance = 0.5;
-              const fov = cam.fov;
-              const aspect = cam.aspect;
-              const height = 2 * distance * Math.tan(THREE.Math.degToRad(fov / 2));
-              const width = height * aspect;
-              overlay.setAttribute('width', width);
-              overlay.setAttribute('height', height);
-            }
-            // set the image and show the overlay
-            overlay.setAttribute('material', 'src: ' + src + '; shader: flat;');
-            overlay.setAttribute('visible', 'true');
-          });
+    
+    <style>
+        /* تنسيق طبقة التكبير (Overlay) */
+        #fullscreen-zoom {
+            display: none; /* مخفي افتراضياً */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999; /* التأكد من ظهوره فوق كل شيء */
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+            animation: fadeIn 0.3s ease;
         }
-      });
+
+        #fullscreen-zoom img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain; /* يحافظ على أبعاد الصورة */
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* نص إرشادي بسيط */
+        .instruction {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: sans-serif;
+            pointer-events: none;
+            z-index: 100;
+            text-shadow: 1px 1px 5px black;
+        }
+    </style>
+
+    <script>
+        AFRAME.registerComponent('zoom-logic', {
+            init: function () {
+                const zoomOverlay = document.getElementById('fullscreen-zoom');
+                const zoomImg = zoomOverlay.querySelector('img');
+
+                this.el.addEventListener('click', (e) => {
+                    const src = this.el.getAttribute('src');
+                    
+                    // تحديث مصدر الصورة وإظهار الطبقة
+                    zoomImg.src = src;
+                    zoomOverlay.style.display = 'flex';
+                });
+            }
+        });
+
+        // وظيفة إغلاق التكبير
+        function closeZoom() {
+            document.getElementById('fullscreen-zoom').style.display = 'none';
+        }
     </script>
 </head>
 <body>
 
-  <a-scene>
-    <a-sky color="#87CEEB"></a-sky> 
+    <div class="instruction">انقر على أي صورة لتكبيرها</div>
 
-    <a-image id="image1" zoom-on-click src="photo_2026-03-07_21-54-13.jpg" position="0 1.6 -6" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image2" zoom-on-click src="photo_2026-03-07_21-54-29.jpg" position="4.2 1.6 -4.2" rotation="0 -45 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image3" zoom-on-click src="photo_2026-03-07_21-54-35.jpg" position="6 1.6 0" rotation="0 -90 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image4" zoom-on-click src="photo_2026-03-07_21-54-41.jpg" position="4.2 1.6 4.2" rotation="0 -135 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image5" zoom-on-click src="photo_2026-03-07_21-54-46.jpg" position="0 1.6 6" rotation="0 180 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image6" zoom-on-click src="photo_2026-03-07_21-54-50.jpg" position="-4.2 1.6 4.2" rotation="0 135 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image7" zoom-on-click src="photo_2026-03-07_21-54-13.jpg" position="-6 1.6 0" rotation="0 90 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
-    
-    <a-image id="image8" zoom-on-click src="photo_2026-03-07_21-54-13.jpg" position="-4.2 1.6 -4.2" rotation="0 45 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
+    <div id="fullscreen-zoom" onclick="closeZoom()">
+        <img src="" alt="Zoomed Image">
+    </div>
 
-    <a-image id="image9" src="photo_2026-03-07_21-54-13.jpg" position="0 7 0" rotation="90 0 0" width="5" height="5" material="magFilter: linear; minFilter: linearMipmapLinear"></a-image>
+    <a-scene renderer="antialias: true; colorManagement: true;" 
+             cursor="rayOrigin: mouse" 
+             raycaster="objects: .clickable">
+        
+        <a-sky color="#1a1a1a"></a-sky>
+        <a-entity light="type: ambient; intensity: 1.5;"></a-entity>
 
-    <a-entity camera look-controls position="0 1.6 0">
-      <a-cursor></a-cursor>
-      <!-- instructions always visible to the viewer -->
-      <a-entity position="0 -0.5 -1" text="value: اضغط على البوستر لتكبيره\Aسيملأ الشاشة بجودة عالية\Aاضغط على الصورة المكبرة للخروج; color: #000; width: 2.5; align: center;"></a-entity>
-    </a-entity>
-</a-scene>
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="0 1.6 -5" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg" position="3.5 1.6 -3.5" rotation="0 -45 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-35.jpg" position="5 1.6 0" rotation="0 -90 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-41.jpg" position="3.5 1.6 3.5" rotation="0 -135 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-46.jpg" position="0 1.6 5" rotation="0 180 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-50.jpg" position="-3.5 1.6 3.5" rotation="0 135 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="-5 1.6 0" rotation="0 90 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg" position="-3.5 1.6 -3.5" rotation="0 45 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="0 6 0" rotation="90 0 0" width="4" height="4">
+            <a-plane color="#fff" width="4.2" height="4.2" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-entity camera look-controls position="0 1.6 0"></a-entity>
+
+    </a-scene>
 
 </body>
 </html>
