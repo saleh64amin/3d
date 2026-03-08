@@ -7,11 +7,17 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>معرض الصور الذكي</title>
+<title>معرض الصور</title>
 
 <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
 <style>
+
+html,body{
+margin:0;
+overflow:hidden;
+touch-action:none;
+}
 
 #fullscreen-zoom{
 display:none;
@@ -24,7 +30,6 @@ background:rgba(0,0,0,0.9);
 z-index:9999;
 justify-content:center;
 align-items:center;
-cursor:zoom-out;
 }
 
 #fullscreen-zoom img{
@@ -39,36 +44,7 @@ bottom:20px;
 width:100%;
 text-align:center;
 color:white;
-font-family:sans-serif;
 z-index:100;
-text-shadow:1px 1px 5px black;
-}
-
-.nav-links{
-position:fixed;
-bottom:80px;
-width:100%;
-text-align:center;
-z-index:200;
-direction:ltr;
-}
-
-.nav-links a{
-display:inline-block;
-background:#556B2F;
-color:white;
-padding:12px 24px;
-margin:0 10px;
-border-radius:40px;
-text-decoration:none;
-font-family:sans-serif;
-font-weight:bold;
-font-size:20px;
-border:2px solid #6B8E23;
-}
-
-.nav-links a:hover{
-background:#6B8E23;
 }
 
 </style>
@@ -84,8 +60,7 @@ const zoomImg=overlay.querySelector("img");
 
 this.el.addEventListener("click",()=>{
 
-const src=this.el.getAttribute("src");
-zoomImg.src=src;
+zoomImg.src=this.el.getAttribute("src");
 overlay.style.display="flex";
 
 });
@@ -105,12 +80,7 @@ document.getElementById("fullscreen-zoom").style.display="none";
 <body>
 
 <div class="instruction">
-اسحب الشاشة للتحرك — اضغط الصورة للتكبير
-</div>
-
-<div class="nav-links">
-<a href="1.html">1</a>
-<a href="2.html">2</a>
+اسحب الشاشة أو حرّك الهاتف
 </div>
 
 <div id="fullscreen-zoom" onclick="closeZoom()">
@@ -118,86 +88,81 @@ document.getElementById("fullscreen-zoom").style.display="none";
 </div>
 
 
-<a-scene
-renderer="antialias:true"
-vr-mode-ui="enabled:false">
+<a-scene vr-mode-ui="enabled:false">
 
 <a-sky color="#556B2F"></a-sky>
 
 <a-entity light="type:ambient;intensity:1.5"></a-entity>
 
 
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg"
+<!-- الصور حولك -->
+
+<a-image zoom-logic src="photo_2026-03-07_21-54-13.jpg"
 position="0 1.6 -5"
 width="3.5"
 height="3.5"></a-image>
 
-
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-29.jpg"
 position="3.5 1.6 -3.5"
 rotation="0 -45 0"
 width="3.5"
 height="3.5"></a-image>
 
-
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-35.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-35.jpg"
 position="5 1.6 0"
 rotation="0 -90 0"
 width="3.5"
 height="3.5"></a-image>
 
-
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-41.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-41.jpg"
 position="3.5 1.6 3.5"
 rotation="0 -135 0"
 width="3.5"
 height="3.5"></a-image>
 
-
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-46.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-46.jpg"
 position="0 1.6 5"
 rotation="0 180 0"
 width="3.5"
 height="3.5"></a-image>
 
-
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-50.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-50.jpg"
 position="-3.5 1.6 3.5"
 rotation="0 135 0"
 width="3.5"
 height="3.5"></a-image>
 
+<!-- تكرار بعض الصور لإكمال 8 حولك -->
 
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-13.jpg"
 position="-5 1.6 0"
 rotation="0 90 0"
 width="3.5"
 height="3.5"></a-image>
 
-
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-29.jpg"
 position="-3.5 1.6 -3.5"
 rotation="0 45 0"
 width="3.5"
 height="3.5"></a-image>
 
+<!-- الصورة التاسعة في الأعلى -->
 
-<a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg"
+<a-image zoom-logic src="photo_2026-03-07_21-54-35.jpg"
 position="0 6 0"
 rotation="90 0 0"
 width="4"
 height="4"></a-image>
 
 
-
 <a-entity
 camera
-look-controls="touchEnabled:true; mouseEnabled:true; reverseTouchDrag:false"
+look-controls="touchEnabled:true;magicWindowTrackingEnabled:true"
 position="0 1.6 0">
 
 <a-entity
-cursor="rayOrigin:mouse"
-raycaster="objects:.clickable">
+cursor="rayOrigin:entity"
+raycaster="objects:a-image">
 </a-entity>
 
 </a-entity>
