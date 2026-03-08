@@ -1,204 +1,179 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض الصور الذكي - جيروسكوب مباشر</title>
+    <title>معرض الصور الذكي المطور</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
-        :root {
-            --bg-gradient: radial-gradient(circle, #2c3e50 0%, #000000 100%);
-            --accent-color: #00d2ff;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: var(--bg-gradient);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px; /* لإنشاء البعد الثالث */
-        }
-
-        /* حاوية المعرض */
-        .gallery-container {
-            width: 300px;
-            height: 200px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s linear; /* سرعة استجابة الحساس */
-        }
-
-        /* الصور */
-        .photo-frame {
-            position: absolute;
-            width: 300px;
-            height: 200px;
-            border: 4px solid white;
-            box-sizing: border-box;
-            cursor: pointer;
-            backface-visibility: hidden;
-            transition: filter 0.3s, box-shadow 0.3s;
-            background: #333;
-            object-fit: cover;
-        }
-
-        .photo-frame:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 20px var(--accent-color);
-        }
-
-        /* توزيع الصور في دائرة (8 صور) */
-        /* المسافة translateZ تحدد قطر الدائرة */
-        .p1 { transform: rotateY(0deg) translateZ(450px); }
-        .p2 { transform: rotateY(45deg) translateZ(450px); }
-        .p3 { transform: rotateY(90deg) translateZ(450px); }
-        .p4 { transform: rotateY(135deg) translateZ(450px); }
-        .p5 { transform: rotateY(180deg) translateZ(450px); }
-        .p6 { transform: rotateY(225deg) translateZ(450px); }
-        .p7 { transform: rotateY(270deg) translateZ(450px); }
-        .p8 { transform: rotateY(315deg) translateZ(450px); }
-
         /* طبقة التكبير */
-        #zoom-overlay {
+        #fullscreen-zoom {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
             justify-content: center;
             align-items: center;
             cursor: zoom-out;
+            animation: fadeIn 0.3s ease;
         }
 
-        #zoom-overlay img {
-            max-width: 90%;
-            max-height: 90%;
-            border: 2px solid white;
+        #fullscreen-zoom img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* واجهة التحكم والإشعارات */
-        .ui-panel {
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .instruction {
             position: fixed;
             bottom: 20px;
-            z-index: 1000;
-            text-align: center;
             width: 100%;
+            text-align: center;
+            color: white;
+            font-family: sans-serif;
+            pointer-events: none;
+            z-index: 100;
+            text-shadow: 1px 1px 5px black;
         }
 
-        .btn-gyro {
-            background: var(--accent-color);
-            border: none;
-            padding: 12px 25px;
-            color: black;
+        /* أزرار التنقل بين الصفحات */
+        .nav-links {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 200;
+            direction: ltr; /* للأرقام */
+            pointer-events: auto;
+        }
+        .nav-links a {
+            display: inline-block;
+            background-color: #556B2F; /* أخضر زيتي */
+            color: white;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-family: sans-serif;
             font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,210,255,0.4);
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 2px solid #6B8E23;
+            transition: transform 0.2s, background-color 0.2s;
+            min-width: 60px;
+            text-align: center;
         }
-
-        .info-text {
-            font-size: 0.9em;
-            margin-top: 10px;
-            color: #aaa;
+        .nav-links a:hover {
+            background-color: #6B8E23;
+            transform: scale(1.1);
+        }
+        .nav-links a:active {
+            transform: scale(0.95);
         }
     </style>
+    <script>
+        AFRAME.registerComponent('zoom-logic', {
+            init: function () {
+                const zoomOverlay = document.getElementById('fullscreen-zoom');
+                const zoomImg = zoomOverlay.querySelector('img');
+
+                this.el.addEventListener('click', (e) => {
+                    const src = this.el.getAttribute('src');
+                    zoomImg.src = src;
+                    zoomOverlay.style.display = 'flex';
+                });
+            }
+        });
+
+        function closeZoom() {
+            document.getElementById('fullscreen-zoom').style.display = 'none';
+        }
+    </script>
 </head>
 <body>
 
-    <div id="zoom-overlay" onclick="this.style.display='none'">
-        <img id="full-img" src="" alt="Zoomed">
+    <div class="instruction">انقر على أي صورة لتكبيرها</div>
+
+    <!-- روابط التنقل بين الصفحات (1 و 2) -->
+    <div class="nav-links">
+        <a href="1.html">1</a>
+        <a href="2.html">2</a>
     </div>
 
-    <div class="gallery-container" id="gallery">
-        <img src="photo_2026-03-07_21-54-13.jpg" class="photo-frame p1" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-29.jpg" class="photo-frame p2" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-35.jpg" class="photo-frame p3" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-41.jpg" class="photo-frame p4" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-46.jpg" class="photo-frame p5" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-50.jpg" class="photo-frame p6" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-13.jpg" class="photo-frame p7" onclick="zoom(this.src)">
-        <img src="photo_2026-03-07_21-54-29.jpg" class="photo-frame p8" onclick="zoom(this.src)">
+    <div id="fullscreen-zoom" onclick="closeZoom()">
+        <img src="" alt="Zoomed Image">
     </div>
 
-    <div class="ui-panel">
-        <button class="btn-gyro" onclick="requestGyro()">تفعيل وضع الجيروسكوب 🔄</button>
-        <div class="info-text">حرك هاتفك لاستكشاف المعرض أو انقر للتكبير</div>
-    </div>
+    <a-scene renderer="antialias: true; colorManagement: true;">
+        <!-- خلفية خضراء زيتية -->
+        <a-sky color="#556B2F"></a-sky>
 
-    <script>
-        const gallery = document.getElementById('gallery');
-        let currentAlpha = 0;
+        <a-entity light="type: ambient; intensity: 1.5;"></a-entity>
 
-        // دالة التكبير
-        function zoom(src) {
-            const overlay = document.getElementById('zoom-overlay');
-            document.getElementById('full-img').src = src;
-            overlay.style.display = 'flex';
-        }
+        <!-- الصور -->
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="0 1.6 -5" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-        // طلب الإذن وتفعيل الجيروسكوب
-        async function requestGyro() {
-            // التحقق من دعم المتصفح لطلب الإذن (خاص بنظام iOS)
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        startTracking();
-                    } else {
-                        alert("تم رفض الوصول للحساسات.");
-                    }
-                } catch (e) {
-                    alert("خطأ في تفعيل الحساسات.");
-                }
-            } else {
-                // للأجهزة التي لا تطلب إذناً (أندرويد)
-                startTracking();
-            }
-            
-            // إخفاء الزر بعد الضغط
-            document.querySelector('.btn-gyro').style.display = 'none';
-        }
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg" position="3.5 1.6 -3.5" rotation="0 -45 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-        function startTracking() {
-            window.addEventListener('deviceorientation', (event) => {
-                // alpha هو الدوران حول المحور الرأسي (0-360)
-                if (event.alpha !== null) {
-                    // نستخدم الـ alpha لتدوير المعرض
-                    // طرحنا القيمة من 360 لعكس اتجاه الدوران ليكون طبيعياً
-                    currentAlpha = event.alpha;
-                    gallery.style.transform = `rotateY(${-currentAlpha}deg)`;
-                }
-            });
-        }
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-35.jpg" position="5 1.6 0" rotation="0 -90 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-        // دعم إضافي للكمبيوتر (السحب بالماوس)
-        let isDragging = false;
-        let startX;
-        let rotY = 0;
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-41.jpg" position="3.5 1.6 3.5" rotation="0 -135 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-        document.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.pageX;
-        });
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-46.jpg" position="0 1.6 5" rotation="0 180 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const x = e.pageX;
-            const walk = (x - startX) * 0.2;
-            rotY += walk;
-            gallery.style.transform = `rotateY(${rotY}deg)`;
-            startX = x;
-        });
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-50.jpg" position="-3.5 1.6 3.5" rotation="0 135 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-        document.addEventListener('mouseup', () => isDragging = false);
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="-5 1.6 0" rotation="0 90 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
 
-    </script>
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-29.jpg" position="-3.5 1.6 -3.5" rotation="0 45 0" width="3.5" height="3.5">
+            <a-plane color="#fff" width="3.7" height="3.7" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <a-image class="clickable" zoom-logic src="photo_2026-03-07_21-54-13.jpg" position="0 6 0" rotation="90 0 0" width="4" height="4">
+            <a-plane color="#fff" width="4.2" height="4.2" position="0 0 -0.01"></a-plane>
+        </a-image>
+
+        <!-- الكاميرا مع تحكمات باللمس (سحب الشاشة) ومؤشر مرئي -->
+        <a-entity camera
+                  look-controls="touchEnabled: true"
+                  cursor="rayOrigin: entity"
+                  raycaster="objects: .clickable"
+                  position="0 1.6 0">
+            <!-- نقطة تهدف في المنتصف لتسهيل التفاعل على الموبايل -->
+            <a-entity geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015"
+                      material="color: white; shader: flat"
+                      position="0 0 -2"
+                      scale="0.3 0.3 0.3">
+            </a-entity>
+        </a-entity>
+
+    </a-scene>
+
 </body>
 </html>
